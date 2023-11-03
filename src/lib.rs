@@ -1,14 +1,20 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+pub mod projects;
+
+pub struct TodoistUser {
+    token: String,
+}
+
+impl TodoistUser {
+    pub fn new(api_token: String) -> TodoistUser {
+        TodoistUser {
+            token: api_token
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+
 }
