@@ -6,17 +6,17 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Project {
-    id: String,
-    name: String,
-    color: String,
-    parent_id: Option<String>,
-    order: i32,
-    comment_count: i32,
-    is_shared: bool,
-    is_favorite: bool,
-    is_inbox_project: bool,
-    view_style: String,
-    url: String,
+    pub id: String,
+    pub name: String,
+    pub color: String,
+    pub parent_id: Option<String>,
+    pub order: i32,
+    pub comment_count: i32,
+    pub is_shared: bool,
+    pub is_favorite: bool,
+    pub is_inbox_project: bool,
+    pub view_style: String,
+    pub url: String,
 }
 
 pub fn get_projects(user: &TodoistUser) -> Result<Vec<Project>, TodoistAPIError> {
