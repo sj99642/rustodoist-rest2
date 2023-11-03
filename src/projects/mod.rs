@@ -1,5 +1,5 @@
-use std::error::Error;
 use crate::TodoistUser;
+use crate::err::TodoistAPIError;
 
 use reqwest;
 use serde::Deserialize;
@@ -19,12 +19,29 @@ pub struct Project {
     url: String,
 }
 
-pub fn get_projects(user: &TodoistUser) -> Result<Vec<Project>, Box<dyn Error>> {
+pub fn get_projects(user: &TodoistUser) -> Result<Vec<Project>, TodoistAPIError> {
+    // Make the API request
     let client = reqwest::blocking::Client::new();
     let response = client
         .get("https://api.todoist.com/rest/v2/projects")
         .header("Authorization", String::from("Bearer ") + &user.token)
-        .send()?;
-    let projects: Vec<Project> = response.json()?;
-    Ok(projects)
+        .send();
+
+    // Unpack the meaning of the response, making sure there was no error in making the HTTP request
+    let response = match response {
+        Ok(rsp) => rsp,
+        Err(err) => return Err(TodoistAPIError::ReqwestRequestError(err)),
+    };
+
+    // We got an HTTP response; was it successful?
+    if !response.status().is_success() {
+        return Err(TodoistAPIError::UnsuccessfulHTTPStatus(response.status()));
+    }
+
+    // We got a successful HTTP response. That means it *should* be proper JSON we can deserialise
+    let projects= response.json::<Vec<Project>>();
+    match projects {
+        Ok(projs) => Ok(projs),
+        Err(err) => Err(TodoistAPIError::ReqwestDeserialisationError(err))
+    }
 }

@@ -1,4 +1,5 @@
 pub mod projects;
+pub mod err;
 
 pub struct TodoistUser {
     token: String,
@@ -14,7 +15,6 @@ impl TodoistUser {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
 
 }
