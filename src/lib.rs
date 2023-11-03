@@ -1,5 +1,8 @@
 pub mod projects;
 pub mod err;
+pub mod color;
+
+mod general;
 
 pub struct TodoistUser {
     token: String,
