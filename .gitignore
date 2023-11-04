@@ -2,3 +2,4 @@
 /Cargo.lock
 .idea/
 token.txt
+src/main.rs
