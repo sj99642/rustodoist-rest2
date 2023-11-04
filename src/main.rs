@@ -5,8 +5,11 @@ use rustodoist::projects::{get_projects, add_new_project};
 use serde_json;
 use rustodoist::color::Color;
 
+use std::fs;
+
 fn main() {
-    let user = TodoistUser::new(String::from("3235ffe67584ea231adca143d09d1a48ef74f2fa"));
+    let token = fs::read_to_string("token.txt").expect("Unable to read file").trim().to_string();
+    let user = TodoistUser::new(token);
     // let projects = get_projects(&user);
 
 
