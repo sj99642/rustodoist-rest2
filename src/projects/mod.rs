@@ -3,7 +3,7 @@ mod view_style;
 use crate::TodoistUser;
 use crate::err::TodoistAPIError;
 use crate::color::Color;
-use crate::general::get_from_reqwest_response;
+use crate::general::{get_from_reqwest_response, get_204_from_reqwest_response};
 pub use crate::projects::view_style::ViewStyle;
 
 use reqwest;
@@ -47,7 +47,7 @@ pub fn add_new_project(
     parent_id: Option<&str>,
     color: Option<Color>,
     is_favorite: Option<bool>,
-    view_style: Option<&ViewStyle>,
+    view_style: Option<ViewStyle>,
 ) -> Result<Project, TodoistAPIError> {
     // Make the mapping with all the arguments which were chosen
     let mut map = Map::new();
@@ -62,7 +62,7 @@ pub fn add_new_project(
         map.insert("is_favorite".to_string(), Value::Bool(is_favorite));
     }
     if let Some(view_style) = view_style {
-        map.insert("parent_id".to_string(), Value::String(view_style.to_str().to_string()));
+        map.insert("view_style".to_string(), Value::String(view_style.to_str().to_string()));
     }
 
     // Turn this map into JSON, assuming serialisation was successful
@@ -142,3 +142,11 @@ pub fn update_project_by_id(
 }
 
 
+pub fn delete_project_by_id(user: &TodoistUser, id: &str) -> Result<(), TodoistAPIError> {
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .delete(format!("https://api.todoist.com/rest/v2/projects/{}", id))
+        .header("Authorization", "Bearer ".to_string() + &user.token)
+        .send();
+    get_204_from_reqwest_response(response)
+}

@@ -19,7 +19,7 @@ pub fn get_from_reqwest_response<T: DeserializeOwned>(response: Result<reqwest::
 
     // We got an HTTP response; was it successful?
     if !response.status().is_success() {
-        return Err(TodoistAPIError::UnsuccessfulHTTPStatus(response.status()));
+        return Err(TodoistAPIError::UnsuccessfulHTTPStatus(response.status(), response.text().unwrap_or("".to_string())));
     }
 
     // We got a successful HTTP response. That means it *should* be proper JSON we can deserialise
@@ -28,4 +28,22 @@ pub fn get_from_reqwest_response<T: DeserializeOwned>(response: Result<reqwest::
         Ok(data) => Ok(data),
         Err(err) => Err(TodoistAPIError::ReqwestDeserialisationError(err))
     }
+}
+
+
+/// Handle a request Result where we expected a 204 No Content response
+/// This can return an error, just like get_from_reqwest_response, but if successful will return ()
+pub fn get_204_from_reqwest_response(response: Result<reqwest::blocking::Response, reqwest::Error>) -> Result<(), TodoistAPIError> {
+    // Unpack the meaning of the response, making sure there was no error in making the HTTP request
+    let response = match response {
+        Ok(rsp) => rsp,
+        Err(err) => return Err(TodoistAPIError::ReqwestRequestError(err)),
+    };
+
+    // We got an HTTP response; was it successful?
+    if !response.status().is_success() {
+        return Err(TodoistAPIError::UnsuccessfulHTTPStatus(response.status(), response.text().unwrap_or("".to_string())));
+    }
+
+    Ok(())
 }
