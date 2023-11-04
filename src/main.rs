@@ -1,8 +1,5 @@
-use std::collections::HashMap;
 use rustodoist::TodoistUser;
 use rustodoist::projects;
-
-use serde_json;
 use rustodoist::color::Color;
 
 use std::fs;
@@ -12,4 +9,13 @@ fn main() {
     let user = TodoistUser::new(token);
     let project = projects::get_project_by_id(&user, "2323023562");
     println!("{:?}", project);
+    let updated_project = projects::update_project_by_id(
+        &user,
+        "2323023562",
+        None,
+        Some(Color::Green),
+        None,
+        None
+    );
+    println!("{:?}", updated_project);
 }
