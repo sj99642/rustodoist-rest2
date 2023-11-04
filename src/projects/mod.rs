@@ -87,3 +87,13 @@ pub fn add_new_project(
 }
 
 
+pub fn get_project_by_id(user: &TodoistUser, id: &str) -> Result<Project, TodoistAPIError>{
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .get(format!("https://api.todoist.com/rest/v2/projects/{}", id))
+        .header("Authorization", "Bearer ".to_string() + &user.token)
+        .send();
+    get_from_reqwest_response(response)
+}
+
+
