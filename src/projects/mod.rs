@@ -1,3 +1,5 @@
+//! Functions for getting information about your projects, updating, or deleting them.
+
 mod view_style;
 
 use crate::TodoistUser;
@@ -11,6 +13,9 @@ use serde::Deserialize;
 use serde_json::{Value, Map};
 use uuid::Uuid;
 
+/// Represents a Todoist project as returned from the API.
+///
+/// <https://developer.todoist.com/rest/v2/#projects>
 #[derive(Debug, Deserialize)]
 pub struct Project {
     pub id: String,
@@ -27,6 +32,9 @@ pub struct Project {
 }
 
 
+/// Return a Vec of all the user's projects.
+///
+/// <https://developer.todoist.com/rest/v2/#get-all-projects>
 pub fn get_projects(user: &TodoistUser) -> Result<Vec<Project>, TodoistAPIError> {
     // Make the API request
     let client = reqwest::blocking::Client::new();
@@ -40,7 +48,13 @@ pub fn get_projects(user: &TodoistUser) -> Result<Vec<Project>, TodoistAPIError>
 }
 
 
-// See https://developer.todoist.com/rest/v2/?shell#create-a-new-project
+/// Add a new project
+///
+/// A project name is mandatory, while the other fields are optional, with a default provided by
+/// Todoist. For each of `parent_id`, `color`, `is_favorite` and `view_style`, give `None` to use
+/// the default, or `Some` to specify an explicit value.
+///
+/// <https://developer.todoist.com/rest/v2/#create-a-new-project>
 pub fn add_new_project(
     user: &TodoistUser,
     name: &str,
@@ -87,6 +101,9 @@ pub fn add_new_project(
 }
 
 
+/// Return a single project from its ID.
+///
+/// https://developer.todoist.com/rest/v2/#get-a-project
 pub fn get_project_by_id(user: &TodoistUser, id: &str) -> Result<Project, TodoistAPIError>{
     let client = reqwest::blocking::Client::new();
     let response = client
@@ -97,6 +114,15 @@ pub fn get_project_by_id(user: &TodoistUser, id: &str) -> Result<Project, Todois
 }
 
 
+/// Update a project with a given ID.
+///
+/// All individual fields (`name`, `color`, `is_favorite`, `view_style`) are optional, but at least
+/// one should be provided for this call to make sense. For each argument, give `None` to leave that
+/// field unchanged for ths project, or `Some` to specify a new value for that field.
+///
+/// Returns the project as it stands after the update.
+///
+/// <https://developer.todoist.com/rest/v2/#update-a-project>
 pub fn update_project_by_id(
     user: &TodoistUser,
     id: &str,
@@ -142,6 +168,11 @@ pub fn update_project_by_id(
 }
 
 
+/// Delete a project with the given ID.
+///
+/// Just returns Ok(()) if successful.
+///
+/// <https://developer.todoist.com/rest/v2/#delete-a-project>
 pub fn delete_project_by_id(user: &TodoistUser, id: &str) -> Result<(), TodoistAPIError> {
     let client = reqwest::blocking::Client::new();
     let response = client

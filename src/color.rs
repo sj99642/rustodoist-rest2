@@ -1,4 +1,6 @@
-// Color information taken from https://developer.todoist.com/guides/#colors
+/// The available colours for Todoist projects, labels and filters.
+///
+/// Corresponds to the colours in <https://developer.todoist.com/guides/#colors>
 pub enum Color {
     BerryRed,
     Red,
@@ -24,6 +26,7 @@ pub enum Color {
 
 
 impl Color {
+    /// Return a colour type from its numerical ID
     pub fn from_id(id: u8) -> Option<Color> {
         match id {
             30 => Some(Color::BerryRed),
@@ -50,6 +53,7 @@ impl Color {
         }
     }
 
+    /// Returns the string which represents this colour in the Todoist API
     pub fn to_str(&self) -> &str {
         match self {
             Color::BerryRed => "berry_red",
