@@ -44,6 +44,10 @@
 //! This is a fairly representative sample of how interaction with projects, tasks, sections,
 //! comments and labels works.
 //!
+//! Since basically all of the functions in this crate make an API call which could fail for any
+//! number of reasons, they all return a Result with a TodoistAPIError error type. See the `err`
+//! module for information on those failure types.
+//!
 
 pub mod projects;
 
