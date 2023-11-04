@@ -14,7 +14,7 @@
 //! # Examples
 //! Here's a basic example which gets and prints all of the user's projects:
 //! ```
-//! use rustodoist::{TodoistUser, projects};
+//! use rustodoist_rest2::{TodoistUser, projects};
 //! let user = TodoistUser::new("a2a72c2f394b265bb798d5dc4ef55be51443d519");
 //! let user_projects = projects::get_projects(&user).expect("Couldn't load project list");
 //! println!("{:?}", user_projects);
@@ -28,7 +28,7 @@
 //!
 //! The full code to do this would be:
 //! ```
-//! use rustodoist::{TodoistUser, projects, color::Color, projects::ViewStyle};
+//! use rustodoist_rest2::{TodoistUser, projects, color::Color, projects::ViewStyle};
 //! let user = TodoistUser::new("a2a72c2f394b265bb798d5dc4ef55be51443d519");
 //! let new_project = projects::add_new_project(
 //!     &user,                      // Must give a reference so Todoist knows who we are
