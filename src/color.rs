@@ -1,6 +1,9 @@
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
 /// The available colours for Todoist projects, labels and filters.
 ///
 /// Corresponds to the colours in <https://developer.todoist.com/guides/#colors>
+#[derive(Debug)]
 pub enum Color {
     BerryRed,
     Red,
@@ -78,4 +81,57 @@ impl Color {
             Color::Taupe => "taupe",
         }
     }
+
+    /// Returns the Color corresponding to the string
+    pub fn from_str(s: &str) -> Option<Color> {
+        match s {
+            "berry_red" => Some(Color::BerryRed),
+            "red" => Some(Color::Red),
+            "orange" => Some(Color::Orange),
+            "yellow" => Some(Color::Yellow),
+            "olive_green" => Some(Color::OliveGreen),
+            "lime_green" => Some(Color::LimeGreen),
+            "green" => Some(Color::Green),
+            "mint_green" => Some(Color::MintGreen),
+            "teal" => Some(Color::Teal),
+            "sky_blue" => Some(Color::SkyBlue),
+            "light_blue" => Some(Color::LightBlue),
+            "blue" => Some(Color::Blue),
+            "grape" => Some(Color::Grape),
+            "violet" => Some(Color::Violet),
+            "lavender" => Some(Color::Lavender),
+            "magenta" => Some(Color::Magenta),
+            "salmon" => Some(Color::Salmon),
+            "charcoal" => Some(Color::Charcoal),
+            "grey" => Some(Color::Grey),
+            "taupe" => Some(Color::Taupe),
+            _ => None,
+        }
+    }
 }
+
+
+
+impl Serialize for Color {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        serializer.serialize_str(self.to_str())
+    }
+}
+
+
+impl<'de> Deserialize<'de> for Color {
+    fn deserialize<D>(deserializer: D) -> Result<Color, D::Error>
+        where D: Deserializer<'de>
+    {
+        let s = String::deserialize(deserializer)?;
+        let color = Color::from_str(&s);
+        match color {
+            Some(color) => Ok(color),
+            None => Err(serde::de::Error::custom("Invalid color")),
+        }
+    }
+}
+
+

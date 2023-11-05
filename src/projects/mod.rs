@@ -1,12 +1,13 @@
 //! Functions for getting information about your projects, updating, or deleting them.
 
-mod view_style;
+mod structs;
 
 use crate::TodoistUser;
 use crate::err::TodoistAPIError;
 use crate::color::Color;
 use crate::general::{get_from_reqwest_response, get_204_from_reqwest_response};
-pub use crate::projects::view_style::ViewStyle;
+
+pub use crate::projects::structs::view_style::ViewStyle;
 
 use reqwest;
 use serde::Deserialize;
@@ -20,14 +21,14 @@ use uuid::Uuid;
 pub struct Project {
     pub id: String,
     pub name: String,
-    pub color: String,
+    pub color: Color,
     pub parent_id: Option<String>,
     pub order: i32,
     pub comment_count: i32,
     pub is_shared: bool,
     pub is_favorite: bool,
     pub is_inbox_project: bool,
-    pub view_style: String,
+    pub view_style: ViewStyle,
     pub url: String,
 }
 
