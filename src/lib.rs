@@ -57,6 +57,8 @@ pub mod err;
 /// Represents the different colours Todoist offers for projects, labels and filters.
 pub mod color;
 
+pub mod tasks;
+
 mod general;
 
 /// Represents a Todoist user, holding the user's API token.
