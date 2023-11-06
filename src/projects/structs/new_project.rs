@@ -42,7 +42,7 @@ impl NewProject {
         let response = client
             .post("https://api.todoist.com/rest/v2/projects")
             .header("Authorization", String::from("Bearer ") + &user.token)
-            .json(&self)
+            .json(self)
             .send();
 
         // Now interpret this response properly
