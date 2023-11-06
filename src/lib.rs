@@ -51,12 +51,15 @@
 //! by the API.
 //!
 //! For each of the five object types, full descriptions of the functions and types are given in
-//! the top-level corresponding module. 
+//! the top-level corresponding module.
 //!
 //! Since basically all of the functions in this crate make an API call which could fail for any
 //! number of reasons, they all return a Result with a TodoistAPIError error type. See the `err`
 //! module for information on those failure types.
-//!
+
+
+#![warn(missing_docs)]
+
 
 pub mod projects;
 

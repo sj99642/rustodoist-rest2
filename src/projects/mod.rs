@@ -21,17 +21,15 @@ mod structs;
 
 use crate::TodoistUser;
 use crate::err::TodoistAPIError;
-use crate::color::Color;
 use crate::general::{get_from_reqwest_response, get_204_from_reqwest_response};
 
 pub use crate::projects::structs::view_style::ViewStyle;
 pub use crate::projects::structs::project::Project;
 pub use crate::projects::structs::new_project::NewProject;
+pub use crate::projects::structs::update_project::UpdateProject;
 
 use reqwest;
 use serde::Deserialize;
-use serde_json::{Value, Map};
-use uuid::Uuid;
 
 
 
@@ -60,60 +58,6 @@ pub fn get_project_by_id(user: &TodoistUser, id: &str) -> Result<Project, Todois
         .get(format!("https://api.todoist.com/rest/v2/projects/{}", id))
         .header("Authorization", "Bearer ".to_string() + &user.token)
         .send();
-    get_from_reqwest_response(response)
-}
-
-
-/// Update a project with a given ID.
-///
-/// All individual fields (`name`, `color`, `is_favorite`, `view_style`) are optional, but at least
-/// one should be provided for this call to make sense. For each argument, give `None` to leave that
-/// field unchanged for ths project, or `Some` to specify a new value for that field.
-///
-/// Returns the project as it stands after the update.
-///
-/// <https://developer.todoist.com/rest/v2/#update-a-project>
-pub fn update_project_by_id(
-    user: &TodoistUser,
-    id: &str,
-    name: Option<&str>,
-    color: Option<Color>,
-    is_favorite: Option<bool>,
-    view_style: Option<ViewStyle>
-) -> Result<Project, TodoistAPIError> {
-    // Start by composing the body of the request, which contains the things to change
-    let mut map = Map::new();
-    if let Some(name) = name {
-        map.insert("name".to_string(), Value::String(name.to_string()));
-    }
-    if let Some(color) = color {
-        map.insert("color".to_string(), Value::String(color.to_str().to_string()));
-    }
-    if let Some(is_favorite) = is_favorite {
-        map.insert("is_favorite".to_string(), Value::Bool(is_favorite));
-    }
-    if let Some(view_style) = view_style {
-        map.insert("view_style".to_string(), Value::String(view_style.to_str().to_string()));
-    }
-
-    // Turn into JSON
-    let json = serde_json::to_string(&map);
-    let json = match json {
-        Ok(serialised) => serialised,
-        Err(err) => return Err(TodoistAPIError::SerdeSerialisationError(err)),
-    };
-
-    // Add the new project via the API
-    let client = reqwest::blocking::Client::new();
-    let response = client
-        .post(format!("https://api.todoist.com/rest/v2/projects/{}", id))
-        .body(json)
-        .header("Content-Type", "application/json")
-        .header("X-Request-Id", Uuid::new_v4().hyphenated().to_string())
-        .header("Authorization", "Bearer ".to_string() + &user.token)
-        .send();
-
-    // Unpack the response, which will hopefully be a Project
     get_from_reqwest_response(response)
 }
 

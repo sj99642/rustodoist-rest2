@@ -4,7 +4,6 @@
 pub mod structs;
 
 use std::collections::HashMap;
-use serde::Deserialize;
 use serde_json::Value;
 use crate::err::TodoistAPIError;
 use crate::general::get_from_reqwest_response;
