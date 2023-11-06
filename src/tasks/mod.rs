@@ -1,6 +1,6 @@
 //! A set of functions to view, modify, create and delete Todoist tasks.
 
-
+/// Define the different kinds of structs used to represent/handle tasks.
 pub mod structs;
 
 use std::collections::HashMap;

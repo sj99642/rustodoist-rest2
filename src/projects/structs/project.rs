@@ -8,6 +8,7 @@ use crate::projects::ViewStyle;
 /// yourself, since not all of the fields are something that can be controlled. To make a new
 /// project, see NewProject, or to update a project see UpdateProject.
 #[derive(Debug, Deserialize)]
+#[allow(missing_docs)]
 pub struct Project {
     pub id: String,
     pub name: String,

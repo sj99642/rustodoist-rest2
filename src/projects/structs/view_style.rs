@@ -3,7 +3,10 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 /// Represents a project's view styles, namely list vs board
 #[derive(Debug)]
 pub enum ViewStyle {
+    /// The "list" view, the default
     List,
+
+    /// The "board" view, displaying sections as Kanban columns
     Board,
 }
 

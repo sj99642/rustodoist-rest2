@@ -4,6 +4,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 ///
 /// Corresponds to the colours in <https://developer.todoist.com/guides/#colors>
 #[derive(Debug)]
+#[allow(missing_docs)]
 pub enum Color {
     BerryRed,
     Red,
