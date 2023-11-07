@@ -1,7 +1,7 @@
 //! A set of functions to view, modify, create and delete Todoist tasks.
 
 /// Define the different kinds of structs used to represent/handle tasks.
-pub mod structs;
+mod structs;
 
 use std::collections::HashMap;
 use serde_json::Value;
@@ -12,9 +12,9 @@ use crate::TodoistUser;
 pub use structs::task::Task;
 pub use structs::duration::Duration;
 pub use structs::due::Due;
+pub use structs::new_task::{NewTask, NewDue, NewDuration};
 
-
-/// Return a Vec of all the user's active tasks, optionally filtered down. CURRENTLY BROKEN.
+/// Return a Vec of all the user's active tasks, optionally filtered down.
 ///
 /// Note that the other `get_active_tasks` functions may be easier to use as they don't require
 /// all of the arguments, which cannot all be used together anyway.
@@ -31,26 +31,28 @@ pub use structs::due::Due;
 /// - `filter` - A filter string (see <https://todoist.com/help/articles/introduction-to-filters-V98wIH>).
 /// - `lang` - The language to use for the filter, if not English.
 /// - `ids` - An explicit list of task IDs to return.
+/// `label` - Only return tasks with this label.
 /// - `project_id` - Only return tasks from this project.
 /// - `section_id` - Only return tasks from this section.
-/// - `label` - Only return tasks with this label.
 ///
 /// The order of precedence for how the API applies these arguments is:
 /// 1. `filter` (with or without `lang`)
 /// 2. `ids`
-/// 3. `label`/`project_id`/`section_id`
+/// 3. `label`
+/// 4. `project_id`
+/// 5. `section_id`
 ///
 /// If a filter is provided, then all the remaining arguments will be ignored (except for the `lang`).
-/// If `ids` is provided, then all the remaining arguments will be ignored.
-/// `label`, `project_id` and `section_id` are only used if neither `filter` nor `ids` are provided.
-pub fn get_active_tasks_pure(
+/// If `ids` is provided, then all the remaining arguments will be ignored, etc. So only one argument
+/// is ever used.
+fn get_active_tasks_pure(
     user: &TodoistUser,
     filter: Option<&str>,
     lang: Option<&str>,
     ids: Option<Vec<&str>>,
+    label: Option<&str>,
     project_id: Option<&str>,
     section_id: Option<&str>,
-    label: Option<&str>,
 ) -> Result<Vec<Task>, TodoistAPIError> {
     // Construct the arguments of the request
     let mut args = HashMap::new();
@@ -61,7 +63,7 @@ pub fn get_active_tasks_pure(
         args.insert("lang".to_string(), Value::String(lang.to_string()));
     }
     if let Some(ids) = ids {
-        args.insert("ids".to_string(), Value::Array(ids.into_iter().map(|id| Value::String(id.to_string())).collect()));
+        args.insert("ids".to_string(), Value::String(ids.join(",")));
     }
     if let Some(project_id) = project_id {
         args.insert("project_id".to_string(), Value::String(project_id.to_string()));
@@ -73,33 +75,22 @@ pub fn get_active_tasks_pure(
         args.insert("label".to_string(), Value::String(label.to_string()));
     }
 
-    // Turn this map into JSON, assuming serialisation was successful
-    let json = serde_json::to_string(&args);
-    let json = match json {
-        Ok(serialised) => serialised,
-        Err(err) => return Err(TodoistAPIError::SerdeSerialisationError(err)),
-    };
-
     // Make the API request
     let client = reqwest::blocking::Client::new();
-    let request = client
+    let response = client
         .get("https://api.todoist.com/rest/v2/tasks")
-        .body(json)
         .header("Authorization", String::from("Bearer ") + &user.token)
-        .header("Content-Type", "application/json");
-    println!("Request: {:#?}", request);
-    let response = request.send();
-    println!("Response: {:#?}", response);
+        .header("Content-Type", "application/json")
+        .query(&args)
+        .send();
 
     // Now interpret this response properly
     get_from_reqwest_response(response)
 }
 
 
-/// Get all the user's active tasks, filtered down by some string filter (see
+/// Get all the user's active tasks which match the given string filter, in English (see
 /// <https://todoist.com/help/articles/introduction-to-filters-V98wIH>.
-///
-/// This is based on `get_active_tasks_pure`.
 pub fn get_active_tasks_filtered(
     user: &TodoistUser,
     filter: &str) -> Result<Vec<Task>, TodoistAPIError>
@@ -108,74 +99,51 @@ pub fn get_active_tasks_filtered(
 }
 
 
-/// Downloads all of the user's active tasks
-pub fn get_all_active_tasks(user: &TodoistUser) -> Result<Vec<Task>, TodoistAPIError> {
-    // Make the API request
-    let client = reqwest::blocking::Client::new();
-    let request = client
-        .get("https://api.todoist.com/rest/v2/tasks")
-        .header("Authorization", String::from("Bearer ") + &user.token)
-        .header("Content-Type", "application/json")
-        .send();
-    get_from_reqwest_response(request)
+/// Get all the user's active tasks which match the given string filter, written in the given language.
+///
+/// The language must be given as an IETF language tag (e.g. "es", "fr", "de"; see
+/// <https://en.wikipedia.org/wiki/IETF_language_tag>).
+pub fn get_active_tasks_filtered_non_english(
+    user: &TodoistUser,
+    filter: &str,
+    lang: &str) -> Result<Vec<Task>, TodoistAPIError>
+{
+    get_active_tasks_pure(user, Some(filter), Some(lang), None, None, None, None)
 }
 
 
-/// Get all the user's active tasks which match the IDs in the given list.
-///
-/// This is meant to be based on `get_active_tasks_pure`, but for now is based on get_alL_active_tasks.
+/// Get all the tasks with an ID in this list.
 pub fn get_active_tasks_by_id(
     user: &TodoistUser,
     ids: Vec<&str>) -> Result<Vec<Task>, TodoistAPIError>
 {
-    Ok(get_all_active_tasks(user)?
-        .into_iter()
-        .filter(|task| ids.contains(&task.id.as_str()))
-        .collect())
+    get_active_tasks_pure(user, None, None, Some(ids), None, None, None)
 }
 
 
 /// Get all the user's active tasks which are in the given project.
-///
-/// This should be based on `get_active_tasks_pure`, but is actually based on `get_all_active_tasks`.
 pub fn get_active_tasks_by_project(
     user: &TodoistUser,
     project_id: &str) -> Result<Vec<Task>, TodoistAPIError>
 {
-    Ok(get_all_active_tasks(user)?
-        .into_iter()
-        .filter(|task| task.project_id == project_id)
-        .collect())
+    get_active_tasks_pure(user, None, None, None, None, Some(project_id), None)
 }
 
 
 /// Get all the user's active tasks which are in the given section.
-///
-/// This should be based on `get_active_tasks_pure`, but is actually based on `get_all_active_tasks`.
 pub fn get_active_tasks_by_section(
     user: &TodoistUser,
     section_id: &str) -> Result<Vec<Task>, TodoistAPIError>
 {
-    Ok(get_all_active_tasks(user)?
-        .into_iter()
-        .filter(|task| task.section_id == Some(section_id.to_string()))
-        .collect())
+    get_active_tasks_pure(user, None, None, None, None, None, Some(section_id))
 }
 
 
 /// Get all the user's active tasks which have the given label.
-///
-/// This is supposed to be based on `get_active_tasks_pure`, but is actually based on `get_all_active_tasks`.
 pub fn get_active_tasks_by_label(
     user: &TodoistUser,
     label: &str) -> Result<Vec<Task>, TodoistAPIError>
 {
-    Ok(get_all_active_tasks(user)?
-        .into_iter()
-        .filter(|task| task.labels.contains(&label.to_string()))
-        .collect())
+    get_active_tasks_pure(user, None, None, None, Some(label), None, None)
 }
-
-
-
 
