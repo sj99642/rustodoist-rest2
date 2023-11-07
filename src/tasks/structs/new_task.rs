@@ -1,4 +1,8 @@
 use serde::{Deserialize, Serialize};
+use crate::err::TodoistAPIError;
+use crate::general::get_from_reqwest_response;
+use crate::tasks::Task;
+use crate::TodoistUser;
 
 /// Used to define the creation of a new task.
 ///
@@ -59,6 +63,17 @@ impl NewTask {
             assignee_id: None,
             duration: None
         }
+    }
+
+    /// Upload this new task to the API.
+    pub fn upload(&self, user: &TodoistUser) -> Result<Task, TodoistAPIError> {
+        let client = reqwest::blocking::Client::new();
+        let response = client
+            .post("https://api.todoist.com/rest/v2/tasks")
+            .header("Authorization", "Bearer ".to_string() + &user.token)
+            .json(&self)
+            .send();
+        get_from_reqwest_response(response)
     }
 }
 
