@@ -28,9 +28,7 @@ use crate::err::TodoistAPIError;
 use crate::general::get_from_reqwest_response;
 use crate::TodoistUser;
 
-pub use structs::task::Task;
-pub use structs::duration::Duration;
-pub use structs::due::Due;
+pub use structs::task::{Task, Due, Duration};
 pub use structs::new_task::{NewTask, NewDue, NewDuration};
 
 /// Return a Vec of all the user's active tasks, optionally filtered down.
@@ -99,7 +97,6 @@ fn get_active_tasks_pure(
     let response = client
         .get("https://api.todoist.com/rest/v2/tasks")
         .header("Authorization", String::from("Bearer ") + &user.token)
-        .header("Content-Type", "application/json")
         .query(&args)
         .send();
 
@@ -166,3 +163,23 @@ pub fn get_active_tasks_by_label(
     get_active_tasks_pure(user, None, None, None, Some(label), None, None)
 }
 
+
+/// Get all the user's active tasks.
+pub fn get_all_active_tasks(user: &TodoistUser) -> Result<Vec<Task>, TodoistAPIError> {
+    get_active_tasks_pure(user, None, None, None, None, None, None)
+}
+
+
+/// Get the individual task with the given ID.
+pub fn get_individual_task_by_id(
+    user: &TodoistUser,
+    id: &str
+) -> Result<Task, TodoistAPIError> {
+    // Make the API request and interpret the response
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .get(format!("https://api.todoist.com/rest/v2/tasks/{}", id))
+        .header("Authorization", String::from("Bearer ") + &user.token)
+        .send();
+    get_from_reqwest_response(response)
+}
