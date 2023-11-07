@@ -1,4 +1,23 @@
-//! A set of functions to view, modify, create and delete Todoist tasks.
+//! Functions for getting information about tasks, updating, deleting, or closing/reopening them.
+//!
+//! The operations provided for tasks by the API are:
+//! - Get all active tasks (`tasks::get_all_active_tasks()`)
+//! - Get active tasks filtered by text filter, project/section/label, or task ID
+//!   (`tasks::get_active_tasks_by...`)
+//! - Get an individual task by its ID (`task::get_individual_task_by_id()`)
+//! - Create a new task (`tasks::NewTask::upload()`)
+//! - Update an existing task (`tasks::UpdateTask::upload()`)
+//! - Delete a task (`project::delete_task_by_id()`)
+//! - Close/complete a task (`project::close_task_by_id()`)
+//! - Reopen a closed task (`project::reopen_task_by_id()`)
+//!
+//! The first two return a `Vec` of `Task` structs. The next three each return a single `Task`.
+//! The final ones just return `()` in the case of success.
+//!
+//! Creating a new task, or updating an existing one, is done by creating an instance of
+//! `NewTask` or `UpdateTask` respectively. Optional fields are represented by `Option` types.
+//! Create the struct as you need, then run its `update()` method to make the API call. If it is
+//! successful, a full `Task` struct will be returned showing the new state of the task.
 
 /// Define the different kinds of structs used to represent/handle tasks.
 mod structs;
