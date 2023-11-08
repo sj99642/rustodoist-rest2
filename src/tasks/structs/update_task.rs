@@ -1,8 +1,14 @@
+use serde::Serialize;
 use crate::err::TodoistAPIError;
 use crate::general::get_from_reqwest_response;
 use crate::tasks::{NewDue, NewDuration, Task};
 use crate::TodoistUser;
 
+/// Used to make an update to a task. Any field which is `None` will not be updated.
+///
+/// Call the `update()` method when you are ready to upload the changes to the API.
+#[derive(Debug, Serialize)]
+#[allow(missing_docs)]
 pub struct UpdateTask {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub content: Option<String>,
@@ -30,6 +36,8 @@ pub struct UpdateTask {
 
 
 impl UpdateTask {
+    /// Upload the changes defined in the struct to the API, specifying the ID of the task
+    /// you want to update.
     pub fn upload(
         &self,
         user: &TodoistUser,

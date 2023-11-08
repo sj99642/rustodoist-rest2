@@ -30,6 +30,7 @@ use crate::TodoistUser;
 
 pub use structs::task::{Task, Due, Duration};
 pub use structs::new_task::{NewTask, NewDue, NewDuration};
+pub use structs::update_task::UpdateTask;
 
 /// Return a Vec of all the user's active tasks, optionally filtered down.
 ///
