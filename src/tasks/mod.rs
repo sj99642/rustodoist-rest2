@@ -25,7 +25,7 @@ mod structs;
 use std::collections::HashMap;
 use serde_json::Value;
 use crate::err::TodoistAPIError;
-use crate::general::get_from_reqwest_response;
+use crate::general::{get_from_reqwest_response, get_204_from_reqwest_response};
 use crate::TodoistUser;
 
 pub use structs::task::{Task, Due, Duration};
@@ -182,4 +182,34 @@ pub fn get_individual_task_by_id(
         .header("Authorization", String::from("Bearer ") + &user.token)
         .send();
     get_from_reqwest_response(response)
+}
+
+
+/// Mark a task as complete. Returns an empty tuple in case of success.
+pub fn close_task_by_id(
+    user: &TodoistUser,
+    id: &str,
+) -> Result<(), TodoistAPIError> {
+    // Make the API request and interpret the response
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .post(format!("https://api.todoist.com/rest/v2/tasks/{}/close", id))
+        .header("Authorization", String::from("Bearer ") + &user.token)
+        .send();
+    get_204_from_reqwest_response(response)
+}
+
+
+/// Reopen a closed task. Returns an empty tuple in case of success.
+pub fn reopen_task_by_id(
+    user: &TodoistUser,
+    id: &str,
+) -> Result<(), TodoistAPIError> {
+    // Make the API request and interpret the response
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .post(format!("https://api.todoist.com/rest/v2/tasks/{}/reopen", id))
+        .header("Authorization", String::from("Bearer ") + &user.token)
+        .send();
+    get_204_from_reqwest_response(response)
 }
