@@ -71,7 +71,11 @@ pub mod color;
 
 pub mod tasks;
 
+
+pub mod labels;
+
 mod general;
+
 
 /// Represents a Todoist user, holding the user's API token.
 ///
