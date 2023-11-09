@@ -43,7 +43,7 @@
 //!     is_favorite: None,
 //!     view_style: Some(ViewStyle::Board),
 //! };
-//! let created_project = new_project.upload().expect("Unable to create new project");
+//! let created_project = new_project.upload(&user).expect("Unable to create new project");
 //! println!("Created new project: {:?}", created_project);
 //! ```
 //!
