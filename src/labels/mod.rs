@@ -7,6 +7,7 @@
 mod structs;
 
 pub use structs::label::Label;
+pub use structs::new_label::NewLabel;
 
 use crate::err::TodoistAPIError;
 use crate::general::get_from_reqwest_response;
