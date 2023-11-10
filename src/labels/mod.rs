@@ -22,6 +22,7 @@ mod structs;
 
 pub use structs::label::Label;
 pub use structs::new_label::NewLabel;
+pub use structs::update_label::UpdateLabel;
 
 use crate::err::TodoistAPIError;
 use crate::general::{get_204_from_reqwest_response, get_from_reqwest_response};
@@ -49,6 +50,7 @@ pub fn get_label_by_id(user: &TodoistUser, id: &str) -> Result<Label, TodoistAPI
 }
 
 
+/// Delete the label with the given ID.
 pub fn delete_label_by_id(user: &TodoistUser, id: &str) -> Result<(), TodoistAPIError> {
     // Send the API request
     let client = reqwest::blocking::Client::new();
@@ -87,8 +89,8 @@ pub fn rename_shared_label(user: &TodoistUser, old_name: &str, new_name: &str) -
 }
 
 
-// Remove a shared label from all tasks to which it is applied
-pub fn delete_shared_label(user: &TodoistUser, name: &str) -> Result<(), TodoistAPIError> {
+/// Remove a shared label from all tasks to which it is applied
+pub fn remove_shared_label(user: &TodoistUser, name: &str) -> Result<(), TodoistAPIError> {
     // Send the API request
     let client = reqwest::blocking::Client::new();
     let response = client

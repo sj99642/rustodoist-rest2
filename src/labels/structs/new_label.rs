@@ -9,7 +9,15 @@ use crate::labels::Label;
 use crate::TodoistUser;
 
 
+/// The structure used to create a new label. Create an instance of this struct with the chosen
+/// options, then call the `upload` method to upload it to the Todoist API. The `name` field is
+/// mandatory, but the others are optional.
+///
+/// - If `order` is not specified, the label will be added to the end of the list.
+/// - If `color` is not specified, the label will be given the default API color.
+/// - If `is_favorite` is not specified, the label will not be marked as a favorite.
 #[derive(Serialize)]
+#[allow(missing_docs)]
 pub struct NewLabel {
     pub name: String,
 
@@ -25,6 +33,7 @@ pub struct NewLabel {
 
 
 impl NewLabel {
+    /// Upload the label to the Todoist API. Returns a full `Label` struct.
     pub fn upload(&self, user: &TodoistUser) -> Result<Label, TodoistAPIError> {
         // Send the API request
         let client = reqwest::blocking::Client::new();

@@ -6,4 +6,4 @@ but sections, comments, and labels are not. I expect everything to be fully impl
 See https://developer.todoist.com/rest/v2/ for more information on the Todoist REST API, or
 https://docs.rs/rustodoist_rest2/latest/rustodoist_rest2/ for the documentation for this crate.
 
-Please report any bugs on the GitHub repository at 
+Please report any bugs on the GitHub repository at https://github.com/sj99642/todoist-v2-rest.
