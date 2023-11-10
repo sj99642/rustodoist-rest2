@@ -19,6 +19,8 @@
 mod structs;
 
 pub use structs::section::Section;
+pub use structs::new_section::NewSection;
+
 use crate::err::TodoistAPIError;
 use crate::general::{get_204_from_reqwest_response, get_from_reqwest_response};
 use crate::TodoistUser;
