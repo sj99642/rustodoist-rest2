@@ -10,6 +10,7 @@ use crate::TodoistUser;
 /// no order is provided, the API will put this section at the bottom
 /// of the project.
 #[derive(Serialize, Debug)]
+#[allow(missing_docs)]
 pub struct NewSection {
     pub name: String,
     pub project_id: String,
