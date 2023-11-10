@@ -1,5 +1,7 @@
 A wrapper for the Todoist REST v2 API.
 
+IMPORTANT: Crate moved to todoist-v2-rest. 
+
 Currently a work in progress; all project and task actions the REST API allows are implemented,
 but sections, comments, and labels are not. I expect everything to be fully implemented within a week or two. 
 
