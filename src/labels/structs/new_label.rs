@@ -8,6 +8,7 @@ use crate::general::get_from_reqwest_response;
 use crate::labels::Label;
 use crate::TodoistUser;
 
+
 #[derive(Serialize)]
 pub struct NewLabel {
     pub name: String,
