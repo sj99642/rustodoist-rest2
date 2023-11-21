@@ -8,7 +8,7 @@
 //! - To get all sections in a project, use `get_all_sections_in_project()`
 //! - To get a section by its ID, use `get_section_by_id()`
 //! - To create a new section, make a `NewSection` struct and call `upload()` on it
-//! - To update a section whose ID you know, use `update_section()`*
+//! - To update a section whose ID you know, use `update_section_name()`*
 //! - To delete a section whose ID you know, run `delete_section_by_id()`
 //!
 //! * Note that updating a section is different to updating other objects. Once a section is made,
@@ -79,7 +79,7 @@ pub fn delete_section_by_id(user: &TodoistUser, id: &str) -> Result<(), TodoistA
 
 
 /// Change the section's name
-pub fn update_section(user: &TodoistUser, id: &str, new_name: &str) -> Result<Section, TodoistAPIError> {
+pub fn update_section_name(user: &TodoistUser, id: &str, new_name: &str) -> Result<Section, TodoistAPIError> {
     // Send the API request
     let client = reqwest::blocking::Client::new();
     let mut map = std::collections::HashMap::new();
