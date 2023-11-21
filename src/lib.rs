@@ -14,7 +14,7 @@
 //! # Examples
 //! Here's a basic example which gets and prints all of the user's projects:
 //! ```
-//! use rustodoist_rest2::{TodoistUser, projects};
+//! use todoist_v2_rest::{TodoistUser, projects};
 //! let user = TodoistUser::new("a2a72c2f394b265bb798d5dc4ef55be51443d519");
 //! let user_projects = projects::get_projects(&user).expect("Couldn't load project list");
 //! println!("{:?}", user_projects);
@@ -34,7 +34,7 @@
 //! this, we create a new `NewProject` struct, fill in the fields we want, then call its
 //! `upload()` method. The full code to do this would be:
 //! ```
-//! use rustodoist_rest2::{TodoistUser, projects, color::Color, projects::ViewStyle};
+//! use todoist_v2_rest::{TodoistUser, projects, color::Color, projects::ViewStyle};
 //! let user = TodoistUser::new("a2a72c2f394b265bb798d5dc4ef55be51443d519");
 //! let new_project = projects::NewProject {
 //!     name: "Make Todoist Integration".to_string(),

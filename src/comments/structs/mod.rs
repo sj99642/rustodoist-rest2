@@ -1,2 +1,2 @@
-mod comment;
-mod attachment;
+pub mod comment;
+pub mod attachment;

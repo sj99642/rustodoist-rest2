@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::comments::structs::attachment::Attachment;
+
 /// Defines the `Comment` struct, which is returned from API calls to represent comments in
 /// Todoist.
 #[derive(Debug, Deserialize)]

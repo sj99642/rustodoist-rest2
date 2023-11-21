@@ -23,13 +23,7 @@ pub enum UploadState {
 }
 
 
-fn calculate(bottom: i32, top: i32) -> i32 {
-    (bottom..=top)
-        .filter(|x| x % 2 == 0)
-        .sum()
-}
-
-
+// TODO Implement this properly
 #[derive(Debug, Serialize, Deserialize)]
 pub enum AttachmentType {
     Basic(),
