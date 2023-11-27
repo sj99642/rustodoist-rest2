@@ -4,7 +4,7 @@
 //! - Get a single comment by its ID (`get_comment_by_id()`)
 //! - Create a new comment (`NewComment::upload()`)
 //! - Delete a comment by its ID (`delete_comment_by_id()`)
-//! - Update the textual content of a comment (`update_comment_content()`)*
+//! - Update the textual content of a comment (`update_comment_content()`)
 //!
 //! * There is no `UpdateComment` struct, as once a comment has been made the only thing that
 //!   can be changed is its content.
